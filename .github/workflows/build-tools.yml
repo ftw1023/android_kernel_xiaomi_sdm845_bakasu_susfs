@@ -1,0 +1,36 @@
+name: Build resize2fs static aarch64
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install cross toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y gcc-aarch64-linux-gnu make gettext
+
+      - name: Clone e2fsprogs
+        run: git clone --depth 1 --branch v1.47.2 https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git
+
+      - name: Build static resize2fs
+        run: |
+          cd e2fsprogs
+          mkdir -p build && cd build
+          ../configure --host=aarch64-linux-gnu CC=aarch64-linux-gnu-gcc --enable-elf-static --disable-nls
+          make -j$(nproc) resize2fs e2fsck LDFLAGS="-static -s"
+          file resize2fs/resize2fs e2fsck/e2fsck
+          mkdir -p ../out
+          cp -f resize2fs/resize2fs ../out/resize2fs
+          cp -f e2fsck/e2fsck ../out/e2fsck
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resize2fs-aarch64
+          path: out/
