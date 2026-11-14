@@ -71,6 +71,7 @@ jobs:
           cd KernelSU
           git fetch origin tag v4.2.0-rc3 --depth=1
           git checkout FETCH_HEAD
+          git fetch --unshallow origin || true
           git log -1 --format="KernelSU now at: %h %s"
 
       - name: Install build dependencies
@@ -78,7 +79,7 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
             bc bison flex libssl-dev libelf-dev make git zip unzip curl \
-            libncurses-dev gcc python3 cpio gzip lz4
+            libncurses-dev gcc python3 cpio gzip lz4 libxml2
 
       - name: Set up ccache-ECS (cctv18)
         run: |
