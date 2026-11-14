@@ -74,6 +74,18 @@ jobs:
           git fetch --unshallow origin || true
           git log -1 --format="KernelSU now at: %h %s"
 
+      - name: Adapt KernelSU rc3 to tree susfs 2.2.0
+        run: |
+          sed -i 's|#elif defined(CONFIG_KSU_SUSFS) // susfs|#elif 0 // susfs 2.2.0 lacks no_su API - use TIF fallback|' KernelSU/kernel/feature/sucompat.h
+          sed -i 's|susfs_set_current_proc_no_su();|ksu_set_current_proc_unprivillege();|g' KernelSU/kernel/hook/setuid_hook.c
+          sed -i 's|susfs_clear_current_proc_no_su();|ksu_clear_current_proc_unprivillege();|g' KernelSU/kernel/hook/setuid_hook.c
+          sed -i '/susfs_set_current_proc_umounted_for_zygote_next();/d' KernelSU/kernel/hook/setuid_hook.c
+          sed -i '\#ksu_handle_faccessat(&dfd#d' fs/open.c
+          sed -i '\#ksu_handle_stat(&dfd#d' fs/stat.c
+          sed -i 's|ksu_handle_sys_read(fd);|;|' fs/read_write.c
+          echo "=== adaptation done ==="
+          grep -c "susfs_set_current_proc_no_su" KernelSU/kernel/hook/setuid_hook.c || true
+
       - name: Install build dependencies
         run: |
           sudo apt-get update -qq
