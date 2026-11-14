@@ -25,7 +25,6 @@ jobs:
           ../configure --host=aarch64-linux-gnu CC=aarch64-linux-gnu-gcc --disable-nls --disable-debugfs --disable-tune2fs --disable-e2image
           make -j$(nproc) all LDFLAGS="-static -s" >&2
           file resize/resize2fs e2fsck/e2fsck
-          ls -la resize/resize2fs e2fsck/e2fsck
           mkdir -p ../out
           cp -f resize/resize2fs ../out/resize2fs
           cp -f e2fsck/e2fsck ../out/e2fsck
@@ -34,4 +33,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: resize2fs-aarch64
-          path: out/
+          path: e2fsprogs/out/
+          if-no-files-found: error
