@@ -66,6 +66,13 @@ jobs:
           submodules: recursive
           fetch-depth: 1
 
+      - name: Update KernelSU to v4.2.0-rc3 (match manager API 35203)
+        run: |
+          cd KernelSU
+          git fetch origin tag v4.2.0-rc3 --depth=1
+          git checkout FETCH_HEAD
+          git log -1 --format="KernelSU now at: %h %s"
+
       - name: Install build dependencies
         run: |
           sudo apt-get update -qq
