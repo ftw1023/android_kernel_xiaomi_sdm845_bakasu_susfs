@@ -22,9 +22,10 @@ jobs:
         run: |
           cd e2fsprogs
           mkdir -p build && cd build
-          ../configure --host=aarch64-linux-gnu CC=aarch64-linux-gnu-gcc --enable-elf-static --disable-nls
-          make -j$(nproc) resize2fs e2fsck LDFLAGS="-static -s"
+          ../configure --host=aarch64-linux-gnu CC=aarch64-linux-gnu-gcc --disable-nls --disable-debugfs --disable-tune2fs --disable-e2image
+          make -j$(nproc) all LDFLAGS="-static -s" >&2
           file resize2fs/resize2fs e2fsck/e2fsck
+          ls -la resize2fs/resize2fs e2fsck/e2fsck
           mkdir -p ../out
           cp -f resize2fs/resize2fs ../out/resize2fs
           cp -f e2fsck/e2fsck ../out/e2fsck
