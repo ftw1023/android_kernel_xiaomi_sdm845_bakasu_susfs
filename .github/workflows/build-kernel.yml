@@ -82,7 +82,7 @@ jobs:
           sed -i '/susfs_set_current_proc_umounted_for_zygote_next();/d' KernelSU/kernel/hook/setuid_hook.c
           sed -i '\#ksu_handle_faccessat(&dfd#d' fs/open.c
           sed -i '\#ksu_handle_stat(&dfd#d' fs/stat.c
-          sed -i 's|ksu_handle_sys_read(fd);|;|' fs/read_write.c
+          sed -i 's|ksu_handle_sys_read(fd);|ksu_handle_sys_read(fd, \&buf, \&count);|' fs/read_write.c
           echo "=== adaptation done ==="
           grep -c "susfs_set_current_proc_no_su" KernelSU/kernel/hook/setuid_hook.c || true
 
